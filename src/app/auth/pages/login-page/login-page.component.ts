@@ -11,9 +11,9 @@ import Swal from 'sweetalert2'
 })
 export class LoginPageComponent {
 
-  private fb = inject(FormBuilder);
+  private fb          = inject(FormBuilder);
   private authService = inject(AuthService);
-  private router      = inject( Router )
+  private router      = inject( Router );
 
   public myForm: FormGroup = this.fb.group({
     email: ['yuney@mail.com',[Validators.required, Validators.email]],
