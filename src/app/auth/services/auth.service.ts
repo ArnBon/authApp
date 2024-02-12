@@ -24,7 +24,9 @@ export class AuthService {
   public authStatus  = computed(() => this._authstatus());
 
 
-  constructor() { }
+  constructor() {
+     this.checkAuthStatus().subscribe();
+   }
 
   login(email: string, password: string): Observable<boolean>{
     const url  = `${this.baseUrl}/auth/login`;
@@ -108,14 +110,12 @@ export class AuthService {
     }
 
 
-
-
-
-
-
     logout() {
-      return
-    }
+    localStorage.removeItem('token');
+    this._currentUser.set(null);
+    this._authstatus.set( AuthStatus.notAuthenticated );
+
+  }
   }
 
 
