@@ -3,6 +3,8 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { environment } from 'environments/environments';
 import { Observable, catchError, map, of, tap, throwError } from 'rxjs';
 import { AuthStatus, LoginResponse, User, CheckTokenResponse } from '../interfaces';
+import { Token } from '@angular/compiler';
+
 
 
 
@@ -50,7 +52,8 @@ export class AuthService {
 
   }
 
-  checkAuthStatus():Observable<boolean>{
+  //clase 367
+  /*checkAuthStatus():Observable<boolean>{
     const url   = `${this.baseUrl}/auth/check-token`;
     const token = localStorage.getItem('token');
     if(!token){
@@ -73,7 +76,43 @@ export class AuthService {
         return of(false);
       })
       );
+    }*/
+
+
+    //clase 368 no te repitas a ti mismo DRY
+      private setAuthentication(user: User, token:string): boolean {
+        this._currentUser.set(user);
+        this._authstatus.set(AuthStatus.authenticated);
+        localStorage.setItem('token', token);
+        return true;
+      }
+
+    //aqui esta refactorizado para la clase 368
+   checkAuthStatus():Observable<boolean>{
+    const url   = `${this.baseUrl}/auth/check-token`;
+    const token = localStorage.getItem('token');
+    if(!token){
+      this.logout();
+      return of(false);
     }
+    const headers = new HttpHeaders()
+    .set('Authorization', `Bearer $ {token}`);
+    return this.http.get<CheckTokenResponse>(url, {headers})
+    .pipe(
+      map( ({ user, token }) => this.setAuthentication(user, token)),
+      catchError(() => {
+        this._authstatus.set(AuthStatus.notAuthenticated);
+        return of(false);
+      })
+      );
+    }
+
+
+
+
+
+
+
     logout() {
       return
     }
